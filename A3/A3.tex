@@ -1,0 +1,136 @@
+% Local Sensitive Hashing (LSH)
+\documentclass[11pt]{article}
+
+\usepackage[normalem]{ulem}
+\usepackage{classDM}
+\usepackage{hyperref}
+
+\newcommand{\JS}{\ensuremath{\textsf{\small JS}}}
+\newcommand{\Ham}{\ensuremath{\textsf{\small Ham}}}
+\newcommand{\Andb}{\ensuremath{\textsf{\small Andb}}}
+\newcommand{\Dice}{\ensuremath{\textsf{\small S-Dice}}}
+
+\title{Asmt 3: Distances and LSH}
+\author{Turn in through \textbf{Gradescope} by Wednesday, February 8 at 2:45pm, then come to class: \\
+100 points}
+\date{}
+
+
+\begin{document}
+\maketitle
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{Overview}
+
+In this assignment, you will explore LSH and Euclidean distances. You will use a data set for this assignment available on Canvas. 
+
+\vspace{.1in}
+
+\textbf{Note:} Homework assignments are intended to help you learn the course material, and successfully solve mid-term and final exams that will be done on paper in person.   
+
+\vspace{.1in}
+
+\emph{As usual, it is recommended that you use LaTeX for this assignment.  If you do not, you may lose points if your assignment is difficult to read or hard to follow.  The latex source for this homework is available on Canvas. I recommend that you drop the two latex files (.tex and .sty) in a new Overleaf project, and compile/edit the .tex file there.}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Choosing $r,b$ (35 points)}
+
+Consider computing an LSH using $t = 200$ hash functions.  We want to find all object pairs which have Jaccard similarity above $\tau = .75$.  
+
+\paragraph{A: (15 points)} 
+Use the trick mentioned in class and the notes to estimate the best values of hash functions $b$ within each of $r$ bands to provide the S-curve 
+\[
+f(s) = 1- (1-s^b)^r
+\]
+with good separation at $\tau$.  Report these values $b,r$.  
+
+\emph{Answer:} 
+
+\paragraph{B: (20 points)}
+Consider the $4$ objects $A,B,C,D$, with the following pair-wise similarities:
+\begin{center}
+\begin{tabular}{r||cccc}
+& A & B & C & D
+\\ \hline
+A & 1 & 0.77 & 0.25 & 0.33\\
+B & 0.77 & 1 & 0.20 & 0.55 \\
+C & 0.25 & 0.20 & 1 & 0.91 \\
+D & 0.33 & 0.55 & 0.91 & 1\\
+\end{tabular}
+\end{center}
+
+Use your choice of $r$ and $b$ and $f(\cdot)$ designed to find pairs of objects with similarity greater than $\tau$:  what is the probability, for each pair of the four objects, of being estimated as similar (i.e., similarity greater than $\tau = 0.75$)?  
+Report $6$ numbers.  
+\emph{(Show your work.)}
+
+
+\emph{Answer:} 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Generating Random Directions  (30 points)}
+
+Read Section 5.3.1 in these notes \url{https://www.cs.utah.edu/~jeffp/DMBook/L5-LSH.pdf} and the part \textbf{``Generating random unit vectors''} in Section 4.6.4 in M4D (\url{https://mathfordata.github.io/versions/M4D-v0.6.pdf}).   
+
+\paragraph{A:  (10 points)}
+Describe how to generate a single random unit vector (chosen uniformly over from the space of all unit vectors $\mathbb{S}^{d-1}$) in $d=10$ dimensions.  To generate randomness, use only the operation $u \leftarrow \mathsf{unif}(0,1)$, which generates a uniform random variable between $0$ and $1$ (then other linear algebraic and trigonometric, etc operations are allowed).  
+\emph{(This random uniform value can be called multiple times.)}
+
+\emph{Answer:} 
+
+\paragraph{B:  (20 points)}
+Generate $t = 200$ unit vectors in $\mathbb{R}^d$ for $d=100$.    Plot of cdf of their pairwise dot products (yes, you need to calculate ${t \choose 2}$ dot products).  
+
+\emph{Answer:} 
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Angular Hashed Approximation (35 points)}
+
+Read Section 4.6.4 in M4D (\url{https://mathfordata.github.io/versions/M4D-v0.6.pdf}). 
+
+Consider the $n = 500$ data points in $\mathbb{R}^d$ for $d=100$ in data set $R$, given in Canvas.  We will use the angular similarity, between two vectors $a,b \in \mathbb{R}^d$:
+\[
+\s{s}_\mathrm{ang}(a,b) = 1- \frac{1}{\pi} \arccos(\langle \bar a, \bar b \rangle) 
+\]
+If $a,b$ are not unit vectors (e.g., in $\mathbb{S}^{d-1}$), then we convert them to 
+$\bar a = a/\|a\|_2$ and $\bar b = b/\|b\|_2$.  The definition of $\s{s}_\mathrm{ang}(a,b)$ assumes that the input are unit vectors, and it reports a value between $0$ and $1$, with as usual $1$ meaning most similar.  
+
+\paragraph{A: (15 points)} 
+Compute all pairs of dot products \emph{(Yes, compute ${n \choose 2}$ values)}, and plot a cdf  of their angular similarities.  
+Report the number with angular similarity more than $\tau =0.75$.  
+
+\emph{Answer:} 
+
+\paragraph{B:  (20 points)}
+Now compute the angular similarities among ${t \choose 2}$ pairs of the $t$ random unit vectors from \s{Q2.B}.  Again plot the cdf, and report the number with angular similarity above $\tau = 0.75$.  
+
+
+\emph{Answer:} 
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Bonus (3 points)}
+
+Implement the banding scheme with your choice of $r,b$, using your $t=200$ random vectors,  to estimate the pairs with similarity above $\tau = 0.85$ in the data set $R$.  Report the fraction found above $\tau = 0.75$.  Compare the runtime of this approach versus a brute force search.  
+
+\emph{Answer:} 
+
+\end{document}
